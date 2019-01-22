@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# servicenow_monitor       Startup script for Orca Sync
+#
+# chkconfig: - 85 15
+# description: Monitoring Orca Sync
+# processname: orca_sync
+# pidfile: /var/run/ps/orca_sync.pid
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+orca_sync_prog=/opt/tufin/securitysuite/ps/bin/orca_sync.py
+prog=servicenow_monitor
+pidfile=/var/run/ps/orca_sync.pid
+lockfile=/var/lock/subsys/orca_sync
+RETVAL=0
+STOP_TIMEOUT=${STOP_TIMEOUT-10}
+
+start() {
+        echo -n $"Starting $prog: "
+        daemon --pidfile=${pidfile} ${orca_sync_prog}
+        RETVAL=$?
+        echo
+        [ ${RETVAL} = 0 ] && touch ${lockfile}
+        return ${RETVAL}
+}
+
+stop() {
+        echo -n $"Stopping $prog: "
+        killproc -p ${pidfile} -d ${STOP_TIMEOUT} ${orca_sync_prog}
+        RETVAL=$?
+        echo
+        [ ${RETVAL} = 0 ] && rm -f ${lockfile} ${pidfile}
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status -p ${pidfile} ${orca_sync_prog}
+        RETVAL=$?
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $prog {start|stop|restart|status}"
+        RETVAL=2
+esac
+
+exit ${RETVAL}

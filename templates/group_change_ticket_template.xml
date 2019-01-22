@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ticket>
+    <subject></subject>
+    <priority>Normal</priority>
+    <!--?<requester>tufin-api</requester>-->
+    <requester>tzachi</requester>
+    <requester_id/>
+    <domain_name/>
+    <workflow>
+        <name>Orca Group Change</name>
+    </workflow>
+    <steps>
+        <step>
+            <name>Submit network object group request</name>
+            <tasks>
+                <task>
+                    <fields>
+                        <field xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="multi_group_change">
+                            <name>Modify network object group</name>
+                        </field>
+                        <field xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="text_field">
+                            <name>Orca Task ID</name>
+                        </field>
+                        <field xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="text_field">
+                            <name>Group Name</name>
+                        </field>
+                    </fields>
+                </task>
+            </tasks>
+        </step>
+    </steps>
+    <comments/>
+</ticket>
