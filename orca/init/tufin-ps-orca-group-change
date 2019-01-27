@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+# orca_group_change       Startup script for Orca Group Change
+#
+# chkconfig: - 85 15
+# description: Monitoring Orca Group Change
+# processname: orca_group_change
+# pidfile: /var/run/orca_group_change.pid
+#
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+orca_prog=/usr/local/orca/bin/orca_group_change.py
+prog=orca_group_change
+pidfile=/var/run/orca_group_change.pid
+lockfile=/var/lock/subsys/orca_group_change
+RETVAL=0
+STOP_TIMEOUT=${STOP_TIMEOUT-10}
+
+start() {
+        echo -n $"Starting $prog: "
+        daemon --pidfile=${pidfile} ${orca_prog}
+        RETVAL=$?
+        echo
+        [ ${RETVAL} = 0 ] && touch ${lockfile}
+        return ${RETVAL}
+}
+
+stop() {
+        echo -n $"Stopping $prog: "
+        killproc -p ${pidfile} -d ${STOP_TIMEOUT} ${orca_prog}
+        RETVAL=$?
+        echo
+        [ ${RETVAL} = 0 ] && rm -f ${lockfile} ${pidfile}
+}
+
+# See how we were called.
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  status)
+        status -p ${pidfile} ${orca_prog}
+        RETVAL=$?
+        ;;
+  restart)
+        stop
+        start
+        ;;
+  *)
+        echo $"Usage: $prog {start|stop|restart|status}"
+        RETVAL=2
+esac
+
+exit ${RETVAL}

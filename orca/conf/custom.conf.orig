@@ -1,0 +1,38 @@
+[custom]
+
+[integration setup]
+hostname = orca.tufin.io
+group_path_url = /bridge/generic-bank/retail/connections
+orca_update_task_url = /bridge/generic-bank/retail/tickets
+change_group_ticket_template_path = /usr/local/orca/templates/group_change_ticket_template.xml
+
+[integration Orca Group Change-Close Step]
+endpoint = /bridge/generic-bank/retail/tickets
+http_method = post
+timing = enter
+request_template_name = orca_close.json
+
+[integration Orca Group Change-REJECT]
+endpoint = /bridge/generic-bank/retail/tickets
+http_method = post
+request_template_name = orca_reject.json
+
+[common]
+log_file_path = /var/log/
+
+[log_levels]
+common = DEBUG
+helpers = INFO
+reports = INFO
+requests = INFO
+mail = INFO
+sql = WARNING
+xml = WARNING
+web = INFO
+third_party = DEBUG
+
+[securechange]
+host = 127.0.0.1
+
+[securetrack]
+host = 127.0.0.1

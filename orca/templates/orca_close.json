@@ -1,0 +1,8 @@
+{
+	"taskId": "#Orca Task ID#",
+	"ticketId": "#ticket_id#",
+  	"name": "#Group Name#",
+  	"status": 2,
+  	"message": "Ticket successfully closed",
+	"url": "#ticket_link#"
+}
