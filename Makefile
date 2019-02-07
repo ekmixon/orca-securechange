@@ -33,7 +33,7 @@ ${PACKAGE_NAME}: orca_ps_scripts.tar.bz.tmp
 	@mv setup_orca_ps_scripts.run ${PACKAGE_NAME}
 	@chmod +x ${PACKAGE_NAME}
 	@rm -f @rm orca_ps_scripts.tar.bz.tmp* self_extract_script.sh.tmp sed*
-	@./scripts/github_release.sh github_api_token=${GITHUB_TOKEN} owner=Tufin repo=orca-securechange tag="v${VERSION}" filename=${PACKAGE_NAME}
+	@sh ./scripts/github_release.sh github_api_token=${GITHUB_TOKEN} owner=Tufin repo=orca-securechange tag="v${VERSION}" filename=${PACKAGE_NAME}
 
 orca_ps_scripts.tar.bz.tmp:
 	@echo "Compress package"
