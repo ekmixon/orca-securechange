@@ -42,7 +42,7 @@ response=$(curl -sH "$AUTH" $GH_TAGS)
 
 # Get ID of the asset based on given filename
 eval $(echo "$response" | grep -m 1 "id.:" | grep -w id | tr : = | tr -cd '[[:alnum:]]=')
-[[ "$id" ]] || { echo "Error: Failed to get release id for tag: $tag"; echo "$response" | awk 'length($0)<100' >&2; exit 1; }
+[ "$id" ] || { echo "Error: Failed to get release id for tag: $tag"; echo "$response" | awk 'length($0)<100' >&2; exit 1; }
 
 # Upload asset
 echo "Uploading asset... $localAssetPath" >&2
