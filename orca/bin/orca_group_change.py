@@ -321,7 +321,7 @@ def update_groups(groups, orca_id, group_name):
 
 
 def monitor_loop(sleep_time=DEFAULT_POOL_INTERVAL, debug=False):
-    setup_loggers(conf.dict("log_levels"), log_to_stdout=debug)
+    setup_loggers(conf.dict("log_levels"), log_to_stdout=debug, log_dir_path="/var/log", log_file="ps_orca_logger.log")
     while True:
         orca_client = OrcaClient(orca_host, group_path_url)
         try:

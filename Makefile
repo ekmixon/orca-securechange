@@ -11,7 +11,7 @@ PYTHON_MINOR_VER=8
 #Get variables
 MAKEFILE_DIR := $(shell pwd)
 
-VERSION=1.0.0
+VERSION=1.0.1
 FILE_LIST=bin conf init lib templates python
 FILELIST_TO_CLEAN=setup_orca_ps_scripts.run self_extract_script.sh.tmp tufin_ps_scripts.tar.bz.tmp*
 PACKAGE_NAME=setup_orca_ps_scripts-${VERSION}.run
