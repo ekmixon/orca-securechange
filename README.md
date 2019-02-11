@@ -9,18 +9,18 @@ A SecureChange add-on to automate Kubernetes egress connectivity on firewalls
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on SecureChange machine. 
-See the Installation section for notes on how to deploy the project.
+These instructions will get you a copy of the project up and running on the SecureChange machine. 
+See the Installation section below for notes on how to deploy the project.
 
 
-### Prerequisites
+### Before You Start
 
-* To start the Ora-SecureChange integration, you must download the package from the [release](
+* Download the package from the [release](
 https://github.com/Tufin/orca-securechange/releases) tab on Github.
 
-* You should get Orca token for the Bearer authentication
+* Obtain an Orca token for the bearer authentication
 
-* You must create a Group-Change workflow in SecureChange. The first step of the workflow should include the following 
+* Create a Group-Change workflow in SecureChange. The first step of the workflow should include the following 
 fields types and names. The package comes with default names which can be changed after installation.
 
     * Workflow name: Orca Group Change
@@ -35,11 +35,11 @@ fields types and names. The package comes with default names which can be change
 
 ### Installation
 
-* Upload the package setup_orca_ps_scripts-x.y.z.run to SecureChange machine
+* Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine
 * Start the installation: sh setup_orca_ps_scripts-x.y.z.run 
     * Enter a valid username and password for both SecureChange and SecureTrack
-    * For Orca authentication enter username as orca and password as "Bearer Orca-Token"
-* Login to SecureChange WEB UI and open the SecureChange API under the Settings tab
+    * For Orca authentication enter username="orca" and password="Bearer Orca-Token"
+* Login to SecureChange through the web UI and open the SecureChange API under the Settings tab
     * Click on the Add script button
     * Give a name to the new script
     * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py
