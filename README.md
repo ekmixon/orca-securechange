@@ -18,10 +18,10 @@ See the Installation section below for notes on how to deploy the project.
 * Download the package from the [release](
 https://github.com/Tufin/orca-securechange/releases) tab on Github.
 
-* Obtain an Orca token for the bearer authentication
+* Create an Orca token for the bearer authentication.
 
 * Create a Group-Change workflow in SecureChange. The first step of the workflow should include the following 
-fields types and names. The package comes with default names which can be changed after installation.
+field types and names. The package comes with default names which can be changed after installation.
 
     * Workflow name: Orca Group Change
     * First step name: Submit network object group request
@@ -35,19 +35,19 @@ fields types and names. The package comes with default names which can be change
 
 ### Installation
 
-* Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine
-* Start the installation: sh setup_orca_ps_scripts-x.y.z.run 
-    * Enter a valid username and password for both SecureChange and SecureTrack
-    * For Orca authentication enter username="orca" and password="Bearer Orca-Token"
-* Login to SecureChange through the web UI and open the SecureChange API under the Settings tab
-    * Click on the Add script button
-    * Give a name to the new script
-    * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py
-    * Enter the Trigger Group Name
-    * Select the Orca workflow
-    * Select all the triggers in the Triggers section
-    * Save settings
-* Update local address of SecureChange in the custom.conf file under /usr/local/orca/conf
+* Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
+* Start the installation: sh setup_orca_ps_scripts-x.y.z.run. 
+    * Enter a valid username and password for both SecureChange and SecureTrack.
+    * For Orca authentication enter username="orca" and password="Bearer Orca-Token".
+* Login to SecureChange through the web UI and open the SecureChange API under the Settings tab.
+    * Click on the Add script button.
+    * Give a name to the new script.
+    * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
+    * Enter the Trigger Group Name.
+    * Select the Orca workflow.
+    * Select all the triggers in the Triggers section.
+    * Save settings.
+* Update local address of SecureChange in the custom.conf file under /usr/local/orca/conf.
 
 
 ## License
