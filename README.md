@@ -49,6 +49,14 @@ field types and names. The package comes with default names which can be changed
     * Save settings.
 * Update local address of SecureChange in the custom.conf file under /usr/local/orca/conf.
 
+### Preparing the Firewall Policies
+* The SecureChange workflow which is triggered from Orca is based on "Modify Group"
+* It will look for certain group names accross the monitored firewalls and update them according to the egress end-points in Orca
+* You need to create these group manually on the relevant firewalls
+* Use the following naming convention: 
+* You also need to create rules on the firewalls that use these groups as destinations (the source should be the Kubernetes cluster IPs or subnet)
+* For the rule services, you can use "Any" and, optionally, apply Tufin's Automatic Policy Generator (APG) to replace them by specific service later
+
 
 ## License
 
