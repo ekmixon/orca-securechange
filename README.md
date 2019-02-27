@@ -18,7 +18,7 @@ See the Installation section below for notes on how to deploy the project.
 * Download the package from the [release](
 https://github.com/Tufin/orca-securechange/releases) tab on Github.
 
-* Create an Orca token for the bearer authentication.
+* In Orca, go to Settings and create an API token for the bearer authentication. Select 'agent' for the token scope and give it the label 'secure change'.
 
 * Create a Group-Change workflow in SecureChange. The first step of the workflow should include the following 
 field types and names. The package comes with default names which can be changed after installation.
@@ -50,12 +50,12 @@ field types and names. The package comes with default names which can be changed
 * Update local address of SecureChange in the custom.conf file under /usr/local/orca/conf.
 
 ### Preparing the Firewall Policies
-* The SecureChange workflow which is triggered from Orca is based on "Modify Group"
+* The SecureChange workflow triggered from Orca is based on "Modify Group"
 * It will look for certain group names accross the monitored firewalls and update them according to the egress end-points in Orca
 * You need to create these group manually on the relevant firewalls
 * Use the following naming convention: 
 * You also need to create rules on the firewalls that use these groups as destinations (the source should be the Kubernetes cluster IPs or subnet)
-* For the rule services, you can use "Any" and, optionally, apply Tufin's Automatic Policy Generator (APG) to replace them by specific service later
+* For the rule services, you can use "Any" and optionally apply Tufin's Automatic Policy Generator (APG) to replace them by specific service later
 
 
 ## License
