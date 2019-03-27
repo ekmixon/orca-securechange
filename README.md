@@ -20,7 +20,7 @@ https://github.com/Tufin/orca-securechange/releases) tab on Github.
 
 * In Orca, go to Settings and create an API token for the bearer authentication. Select 'agent' for the token scope and give it the label 'secure change'.
 
-* Create a Group-Change workflow in SecureChange. The first step of the workflow should include the following 
+* Create a Modify Group workflow in SecureChange. The first step of the workflow should include the following 
 field types and names. The package comes with default names which can be changed after installation.
 
     * Workflow name: Orca Group Change
