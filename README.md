@@ -52,7 +52,7 @@ field types and names. The package comes with default names which can be changed
 ### Preparing the Firewall Policies
 * The SecureChange workflow triggered from Orca is based on "Modify Group"
 * It will look for certain group names accross the monitored firewalls and update them according to the egress end-points in Orca
-* You need to create these group manually on the relevant firewalls
+* You need to create these groups manually on the relevant firewalls
 * Use the following naming convention for group names: &lt;domain&gt;.&lt;project&gt;.&lt;namespace&gt; 
 * You also need to create rules on the firewalls that use these groups as destinations (the source should be the Kubernetes cluster IPs or subnet)
 * Orca does not yet discover protocols and ports. Due to this, there are two options to define the rule "service" field:
