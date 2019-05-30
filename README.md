@@ -38,7 +38,7 @@ field types and names. The package comes with default names which can be changed
 * Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
 * Start the installation: sh setup_orca_ps_scripts-x.y.z.run. 
     * Enter a valid username and password for both SecureChange and SecureTrack.
-    * For Orca authentication enter username="orca" and password="Bearer Orca-Token".
+    * For Orca authentication enter username="orca" and password="Bearer <Orca_API_Token>".
 * Login to SecureChange through the web UI and open the SecureChange API under the Settings tab.
     * Click on the Add script button.
     * Give a name to the new script.
