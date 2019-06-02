@@ -31,8 +31,8 @@ The following are required in order to succesfully complete the integration:
 * Open the file **/usr/local/orca/conf/custom.conf** and define the following parameters:
     * hostname=orca.tufin.io
     * For every instance of /bridge/X/Y/Z - replace X with your ORCA DOMAIN ands Y with ORCA PROJECT.
-    * securechange host = <your securechange address>
-    * securetrack host = <your securetrack addr:q!:ess>
+    * securechange host = <your securechange server address>
+    * securetrack host = <your securetrack server address>
 
 ### Configure SecureChange for the integration
 
