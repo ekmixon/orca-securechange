@@ -66,7 +66,7 @@ In case the firewall does not allow a rule withoput any destination, you may add
     * Use "Any" service and optionally apply Tufin's Automatic Policy Generator (APG) to replace them by specific service later
     * Use https which is the most common protocol for reaching end-points
 
-## How to deploy end-to-end security policies
+## Sending security policy to the external firewalls
 
 1. In Orca go to **Policy -> Security Policy**. Here you'll see the rule base that was generated dynamicaly following the traffic discovery process.
 2. At the upper right corner click on **Actions -> Apply on Firewalls**.
