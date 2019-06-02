@@ -9,12 +9,17 @@ A SecureChange add-on to automate Kubernetes egress connectivity on firewalls
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on the SecureChange machine. 
-See the Installation section below for notes on how to deploy the project.
+These instructions show the steps required for integrating Orca with Tufin SecureChange in order to get an end-to-end egress security policy for kubernetes cluster.
+
+## prerequisites
+
+The following are required in order to succesfully complete the integration:
+1. On your organizational firewalls, allow connection from the local SecureChange to https://orca.tufin.io
+2. Make sure you have 1)SecureChange security admin user rights for the console 2)root access to the SecureChange server.
 
 ### Define an API token in Orca
 
-* Login to Orca, go to Settings and create an API token for the bearer authentication. Select 'agent' for the token scope and give it the label 'secure-change'.
+* Login to Orca, go to **Settings -> Create Token** and create an API token for the bearer authentication. Select 'agent' for the token scope and give it the label 'secure-change'.
 
 ### Instal the integration package on SecureChange server
 
