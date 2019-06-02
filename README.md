@@ -66,6 +66,13 @@ In case the firewall does not allow a rule withoput any destination, you may add
     * Use "Any" service and optionally apply Tufin's Automatic Policy Generator (APG) to replace them by specific service later
     * Use https which is the most common protocol for reaching end-points
 
+## How to deploy end-to-end security policies
+
+1. In Orca go to **Policy -> Security Policy**. Here you'll see the rule base that was generated dynamicaly following the traffic discovery process.
+2. At the upper right corner click on **Actions -> Apply on Firewalls**.
+3. At this point Orca will prepare the "Modify group" request to SecureChange.
+4. SecureChange will poll Orca (every 60 seconds by default) for requests , open a ticket and process the request. In Orca **Policy -> Firewall tockets**, you'll see a "Processing" log.
+5. Follwing completion of "Modify group" workflow, and ticket closure, you'll see in **Policy -> Firewall tockets** a "Implemented" log.
 
 ## License
 
