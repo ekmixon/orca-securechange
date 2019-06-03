@@ -46,6 +46,7 @@ The following are required in order to succesfully complete the integration:
     * Select the Orca workflow.
     * Select all the triggers in the Triggers section.
     * Save settings.
+    
 **Add a new workflow in SecureChange**   
 
 * Create a Modify Group workflow in SecureChange. The first step of the workflow should include the following 
