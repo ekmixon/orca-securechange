@@ -55,7 +55,7 @@ The following are required in order to succesfully complete the integration:
     
    * The first step of the workflow should include the following fields:
       * First step name: Submit network object group request
-
+      
       | Field Type         | Field display Name           |
       | ----------         | ----------                   |
       | multi_group_change | Modify network object group  | **Modify group + multiple**
@@ -64,7 +64,7 @@ The following are required in order to succesfully complete the integration:
       
       The package comes with default names which can be changed later.
       
-      * In Assignments, choose the allowed users to open requests:
+      * In Assignments choose the allowed users to open requests.
     
 ### Preparing the Firewall Policies
 
