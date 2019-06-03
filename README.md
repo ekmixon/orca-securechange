@@ -49,7 +49,7 @@ The following are required in order to succesfully complete the integration:
     
 **Add a new workflow in SecureChange**   
 
-* Create a Modify Group workflow in SecureChange. The first step of the workflow should include the following 
+* Create a 'Modify Group' workflow in SecureChange. The first step of the workflow should include the following 
 field types and names. The package comes with default names which can be changed after installation.
 
     * Workflow name: Orca Group Change
