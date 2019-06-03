@@ -54,17 +54,20 @@ The following are required in order to succesfully complete the integration:
    * Type: Modify group
     
    * First step name: Submit network object group request
-     The first step of the workflow should include the following fields:
+     * The first step of the workflow should include the following fields:
       
-     | Field Type         | Field display Name           |
-     | ----------         | ----------                   |
-     | multi_group_change | Modify network object group  | **Modify group + multiple**
-     | text_field         | Orca Task ID                 |
-     | text_field         | Group Name                   |
+      | Field Type         | Field display Name           |
+      | ----------         | ----------                   |
+      | multi_group_change | Modify network object group  | **Modify group + multiple**
+      | text_field         | Orca Task ID                 |
+      | text_field         | Group Name                   |
       
-     The package comes with default names which can be changed later.
-      
-     * In Assignments choose the allowed users to open requests.
+      The package comes with default names which can be changed later.      
+     * Assignments: choose the allowed users to open requests
+   * Second step name: Modify group
+     * Step mode: auto + actions: Run designer, Update policy/device
+     * Assignments: Mode: Auto-assign, Choose a user
+     
     
 ### Preparing the Firewall Policies
 
