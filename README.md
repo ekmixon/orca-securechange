@@ -26,40 +26,45 @@ The following are required in order to succesfully complete the integration:
 * Download the installation package from the [release](https://github.com/Tufin/orca-securechange/releases) tab on Github.
 * Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
 * Start the installation: sh setup_orca_ps_scripts-x.y.z.run. 
-    * Enter a valid username and password for both SecureChange and SecureTrack.
-    * For Orca authentication enter username="orca" and password="Bearer <Orca_API_Token>".
+   * Enter a valid username and password for both SecureChange and SecureTrack.
+   * For Orca authentication enter username="orca" and password="Bearer <Orca_API_Token>".
 * Open the file **/usr/local/orca/conf/custom.conf** and define the following parameters:
-    * hostname=orca.tufin.io
-    * For every instance of /bridge/X/Y/Z - replace X with your ORCA DOMAIN ands Y with ORCA PROJECT.
-    * securechange host = <your securechange server address>
-    * securetrack host = <your securetrack server address>
+   * hostname=orca.tufin.io
+   * For every instance of /bridge/X/Y/Z - replace X with your ORCA DOMAIN ands Y with ORCA PROJECT.
+   * securechange host = <your securechange server address>
+   * securetrack host = <your securetrack server address>
 
 ### Configure SecureChange for the integration
 
 **Add a new script to SecureChange**
 
 * Login to SecureChange through the web UI and open Settings -> SecureChange API.
-    * Click on the Add script button.
-    * Give a name to the new script.
-    * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
-    * Enter the Trigger Group Name.
-    * Select the Orca workflow.
-    * Select all the triggers in the Triggers section.
-    * Save settings.
+   * Click on the Add script button.
+   * Give a name to the new script.
+   * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
+   * Enter the Trigger Group Name.
+   * Select the Orca workflow.
+   * Select all the triggers in the Triggers section.
+   * Save settings.
     
 **Add a new workflow in SecureChange**   
 
-* Create a 'Modify Group' workflow in SecureChange. The first step of the workflow should include the following 
-field types and names. The package comes with default names which can be changed after installation.
+* Create a workflow in SecureChange.
+   * Workflow name: Orca Group Change
+   * Type: Modify group
+    
+   * The first step of the workflow should include the following fields:
+      * First step name: Submit network object group request
 
-    * Workflow name: Orca Group Change
-    * First step name: Submit network object group request
-
-    | Field Type         | Field Name                   |
-    | ----------         | ----------                   |
-    | multi_group_change | Modify network object group  |
-    | text_field         | Orca Task ID                 |
-    | text_field         | Group Name                   |
+      | Field Type         | Field display Name           |
+      | ----------         | ----------                   |
+      | multi_group_change | Modify network object group  | **Modify group + multiple**
+      | text_field         | Orca Task ID                 |
+      | text_field         | Group Name                   |
+      
+      The package comes with default names which can be changed later.
+      
+      * In Assignments, choose the allowed users to open requests:
     
 ### Preparing the Firewall Policies
 
