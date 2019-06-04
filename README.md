@@ -44,17 +44,6 @@ A wizard will allow you to enter your new credentials.
 
 ### Configure SecureChange for the integration
 
-**Add a new script to SecureChange**
-
-* Login to SecureChange through the web UI and open Settings -> SecureChange API.
-   * Click on the Add script button.
-   * Give a name to the new script.
-   * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
-   * Enter the Trigger Group Name.
-   * Select the Orca workflow.
-   * Select all the triggers in the Triggers section.
-   * Save settings.
-    
 **Add a new workflow in SecureChange**   
 
 * Create a workflow in SecureChange.
@@ -76,7 +65,17 @@ A wizard will allow you to enter your new credentials.
      * Step mode: auto + actions: Run designer, Update policy/device
      * Assignments: Mode: Auto-assign, Choose a user
      
-    
+**Add a new script to SecureChange**
+
+* Login to SecureChange through the web UI and open Settings -> SecureChange API.
+   * Click on the Add script button.
+   * Give a name to the new script.
+   * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
+   * Enter the Trigger Group Name.
+   * Select the Orca workflow.
+   * Select all the triggers in the Triggers section.
+   * Save settings.
+   
 ### Preparing the Firewall Policies
 
 * The SecureChange workflow triggered from Orca is based on "Modify Group"
