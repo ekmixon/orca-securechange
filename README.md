@@ -33,6 +33,14 @@ The following are required in order to succesfully complete the integration:
    * For every instance of /bridge/X/Y/Z - replace X with your ORCA DOMAIN ands Y with ORCA PROJECT.
    * securechange host = <your securechange server address>
    * securetrack host = <your securetrack server address>
+  
+#### Updating credentials in the encrypted credentials store
+
+In order to update credentials run the following:
+```
+/usr/local/orca/bin/set_secure_store.py -o
+```
+A wizard will allow you to enter your new credentials.
 
 ### Configure SecureChange for the integration
 
