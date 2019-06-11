@@ -27,7 +27,7 @@ The following are required in order to succesfully complete the integration:
 * Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
 * Start the installation: 
    ```
-   sh setup_orca_ps_scripts-x.y.z.run.
+   sh setup_orca_ps_scripts-x.y.z.run
    ```
    * Enter a valid username and password for both SecureChange and SecureTrack.
    * For Orca authentication enter username="orca" and password="Bearer <Orca_API_Token>".
