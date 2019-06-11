@@ -25,7 +25,10 @@ The following are required in order to succesfully complete the integration:
 
 * Download the installation package from the [release](https://github.com/Tufin/orca-securechange/releases) tab on Github.
 * Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
-* Start the installation: sh setup_orca_ps_scripts-x.y.z.run. 
+* Start the installation: 
+   ```
+   sh setup_orca_ps_scripts-x.y.z.run.
+   ```
    * Enter a valid username and password for both SecureChange and SecureTrack.
    * For Orca authentication enter username="orca" and password="Bearer <Orca_API_Token>".
 * Open the file **/usr/local/orca/conf/custom.conf** and define the following parameters:
