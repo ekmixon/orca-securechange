@@ -36,6 +36,14 @@ The following are required in order to succesfully complete the integration:
    * For every instance of /bridge/X/Y/Z - replace X with your ORCA DOMAIN ands Y with ORCA PROJECT.
    * securechange host = <your securechange server address>
    * securetrack host = <your securetrack server address>
+* Restart the 'tufin-ps-orca-group-change' service on SecureChange:
+  ```
+  service tufin-ps-orca-group-change restart 
+  ```
+* Now SecureChange should initiate TCP/443 connection with Orca. You may check it using:
+  ```
+  netstat -natp | grep 443
+  ``` 
   
 #### Updating credentials in the encrypted credentials store
 
