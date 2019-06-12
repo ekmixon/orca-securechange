@@ -141,13 +141,13 @@ def valid_device_ids(devices):
     return device_ids
 
 
-def get_group_objects_by_name(group_name, device_ids):
+def get_group_objects_by_name(group_name):
     logger.info("Getting all groups from all devices by name '{}' from first step".format(group_name))
     net_group_to_update = []
     network_objects = st_helper.network_object_text_search(group_name, "name", exact_match=True)
     for network_object in network_objects:
-        if isinstance(network_object, Group_Network_Object) and network_object.display_name == group_name \
-                and network_object.device_id in device_ids:
+        if isinstance(network_object, Group_Network_Object) and network_object.display_name == group_name:
+                # and network_object.device_id in device_ids:
             net_group_to_update.append(network_object)
     logger.debug('Groups have been found: {}'.format(','.join([g.display_name for g in net_group_to_update])))
     return net_group_to_update
@@ -327,8 +327,8 @@ def monitor_loop(sleep_time=DEFAULT_POOL_INTERVAL, debug=False):
         try:
             orca_response = orca_client.get_group_memebers()
             if orca_response['groups']:
-                device_ids = valid_device_ids(st_helper.get_devices_list())
-                logger.debug("Device ids: {}".format(device_ids))
+                # device_ids = valid_device_ids(st_helper.get_devices_list())
+                # logger.debug("Device ids: {}".format(device_ids))
                 for group in orca_response['groups']:
                     g_name, members = group['name'], group['destinations']
                     if not members:
@@ -338,7 +338,7 @@ def monitor_loop(sleep_time=DEFAULT_POOL_INTERVAL, debug=False):
                                                        group_name=g_name, url_path=orca_update_task_url)
                         continue
 
-                    groups_to_update = get_group_objects_by_name(g_name, device_ids)
+                    groups_to_update = get_group_objects_by_name(g_name)
                     if not groups_to_update:
                         msg = "Group name '{}' could not be found".format(g_name)
                         orca_client.update_orca_ticket(orca_response["id"], 'N/A',
