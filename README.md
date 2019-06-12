@@ -112,6 +112,9 @@ In case the firewall does not allow a rule withoput any destination, you may add
 4. SecureChange will poll Orca (every 60 seconds by default) for requests , open a ticket and process the request. In Orca **Policy -> Firewall tickets**, you'll see a "Processing" log.
 5. Follwing completion of "Modify group" workflow, and ticket closure, you'll see in **Policy -> Firewall tickets** a "Implemented" log.
 
+## Logging
+The script log is located in /var/log/ps_orca_logger.log 
+
 ## License
 
 This project is licensed under the Apache License Version 2.0 - see the [LICENSE](LICENSE) file for details
