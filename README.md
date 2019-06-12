@@ -53,6 +53,12 @@ In order to update credentials run the following:
 ```
 A wizard will allow you to enter your new credentials.
 
+In order to update the Orca_API_Token run the following:
+```
+/usr/local/orca/bin/set_secure_store.py -s auth_header_integration
+```
+You'll be prompted for the new token.
+
 ### Configure SecureChange for the integration
 
 **Add a new workflow in SecureChange**   
