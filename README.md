@@ -17,11 +17,11 @@ The following are required in order to succesfully complete the integration:
 1. On your organizational firewalls, allow connection from the local SecureChange to https://orca.tufin.io
 2. Make sure you have 1)SecureChange security admin user rights for the console 2)root access to the SecureChange server.
 
-### Define an API token in Orca
+### Defining an API token in Orca
 
 * Login to Orca, go to **Settings -> Create Token** and create an API token for the bearer authentication. Select 'agent' for the token scope and give it the label 'secure-change'.
 
-### Instal the integration package on SecureChange server
+### Installing the integration package on SecureChange server
 
 * Download the installation package from the [release](https://github.com/Tufin/orca-securechange/releases) tab on Github.
 * Upload the package setup_orca_ps_scripts-x.y.z.run to the SecureChange machine.
@@ -59,9 +59,9 @@ In order to update the Orca_API_Token run the following:
 ```
 You'll be prompted for the new token.
 
-### Configure SecureChange for the integration
+### Configuring SecureChange for the integration
 
-**Add a new workflow in SecureChange**   
+**Adding a new workflow in SecureChange**   
 
 * Create a workflow in SecureChange.
    * Workflow name: Orca Group Change
@@ -82,7 +82,7 @@ You'll be prompted for the new token.
      * Step mode: auto + actions: Run designer, Update policy/device
      * Assignments: Mode: Auto-assign, Choose a user
      
-**Add a new script to SecureChange**
+**Adding a new script to SecureChange**
 
 * Login to SecureChange through the web UI and open Settings -> SecureChange API.
    * Click on the Add script button.
