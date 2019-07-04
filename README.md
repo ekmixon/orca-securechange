@@ -63,6 +63,7 @@ You'll be prompted for the new token.
 
 **Adding a new workflow in SecureChange**   
 
+* Login to SecureChange through the web UI
 * Create a workflow in SecureChange.
    * Workflow name: Orca Group Change
    * Type: Modify group
@@ -84,7 +85,7 @@ You'll be prompted for the new token.
      
 **Adding a new script to SecureChange**
 
-* Login to SecureChange through the web UI and open Settings -> SecureChange API.
+   * Go to Settings -> SecureChange API.
    * Click on the Add script button.
    * Give a name to the new script.
    * In the "Full path" field enter the following path: /usr/local/orca/bin/rest_integration.py.
