@@ -45,7 +45,7 @@ The following are required in order to succesfully complete the integration:
   netstat -natp | grep 443
   ``` 
   
-#### Updating credentials in the encrypted credentials store
+#### Updating credentials to SecureChange/SecureTrack in the encrypted credentials store
 
 In order to update credentials run the following:
 ```
