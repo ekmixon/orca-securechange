@@ -1,7 +1,7 @@
 [custom]
 
 [integration setup]
-hostname = orca.tufin.io
+hostname = securecloud.tufin.io
 group_path_url = /bridge/generic-bank/retail/connections
 orca_update_task_url = /bridge/generic-bank/retail/tickets
 change_group_ticket_template_path = /usr/local/orca/templates/group_change_ticket_template.xml
