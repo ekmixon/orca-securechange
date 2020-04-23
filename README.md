@@ -14,7 +14,7 @@ These instructions show the steps required for integrating Orca with Tufin Secur
 ## prerequisites
 
 The following are required in order to succesfully complete the integration:
-1. On your organizational firewalls, allow connection from the local SecureChange to https://orca.tufin.io
+1. On your organizational firewalls, allow connection from the local SecureChange to https://securecloud.tufin.io
 2. Make sure you have 1)SecureChange security admin user rights for the console 2)root access to the SecureChange server.
 
 ### Defining an API token in Orca
