@@ -49,8 +49,7 @@ def designer_status(ticket):
         if hasattr(multi_ar_field, 'designer_result'):
             is_failed = multi_ar_field.designer_result.status == DesignerResult.DESIGNER_CANNOT_COMPUTE
             return "Error: Problem with Designer" if is_failed else ""
-    else:
-        return ''
+    return ''
 
 
 def designer_results_json(ticket):
@@ -67,8 +66,8 @@ def designer_results_json(ticket):
                 secret_helper.get_username('securechangeworkflow'),
                 secret_helper.get_password('securechangeworkflow')
             )
-            response = multi_ar_field.get_designer_results(*sc_cred, as_json=True)
-            if response:
+            if response := multi_ar_field.get_designer_results(
+                *sc_cred, as_json=True
+            ):
                 return response.decode()
-    else:
-        return ''
+    return ''

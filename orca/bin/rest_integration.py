@@ -25,9 +25,7 @@ sc_helper = Secure_Change_Helper(sc_host, sc_cred)
 def get_cli_args():
     parser = argparse.ArgumentParser('')
     parser.add_argument('--debug', action='store_true', help='Print out logging information to STDOUT.')
-    # Workaround for SC not passing arguments to the script
-    args = parser.parse_args(shlex.split(' '.join(sys.argv[1:])))
-    return args
+    return parser.parse_args(shlex.split(' '.join(sys.argv[1:])))
 
 
 def main():
@@ -42,7 +40,7 @@ def main():
         logger.info("Testing")
         sys.exit(0)
 
-    logger.info('Script is called for ticket id "{}"'.format(ticket_info.id))
+    logger.info(f'Script is called for ticket id "{ticket_info.id}"')
     try:
         template_client = JsonTemplateClient.from_conf(sc_helper, sc_cred[0])
     except (NameError, ValueError) as error:

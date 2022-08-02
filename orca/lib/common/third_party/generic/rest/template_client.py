@@ -75,24 +75,28 @@ class JsonTemplateClient:
         self.kwargs = kwargs
         self.plugins = self._load_plugins()
         self.ticket = None
-        self.sc_helper = kwargs.get('sc_helper', None)
-        self.sc_username = kwargs.get('sc_username', None)
+        self.sc_helper = kwargs.get('sc_helper')
+        self.sc_username = kwargs.get('sc_username')
 
     @property
     def client(self):
         header = json.loads(self.kwargs.get('header', '{}').replace("'", '"'))
         if not header:
             header = {'Content-Type': 'application/json', 'Accept': 'application/json', 'charset': self._encoding}
-        elif ('Content-Type' in header and 'application/json' != header['Content-Type']) or 'Content-Type' not in header:
+        elif (
+            'Content-Type' in header
+            and header['Content-Type'] != 'application/json'
+            or 'Content-Type' not in header
+        ):
             header['Content-Type'] = 'application/json'
 
         username = secret_helper.get_username(SECURE_STORE_KEY)
         password = secret_helper.get_password(SECURE_STORE_KEY)
         if not all((username, password)):
-            auth_header_token = secret_helper.get_password(AUTH_TOKEN_KEY)
-            if not auth_header_token:
+            if auth_header_token := secret_helper.get_password(AUTH_TOKEN_KEY):
+                header.update({'Authorization': auth_header_token})
+            else:
                 raise ValueError('Both username and password must be set, or authentication header must be provided')
-            header.update({'Authorization': auth_header_token})
         try:
             hostname = self.kwargs['hostname']
         except KeyError:
@@ -111,16 +115,21 @@ class JsonTemplateClient:
         return RestClient(**params)
 
     def get_template(self, template_name):
-        logger.debug("Loading template '{}' from '{}'".format(template_name, self._templates_root_dir))
+        logger.debug(
+            f"Loading template '{template_name}' from '{self._templates_root_dir}'"
+        )
+
         full_template_path = os.path.join(self._templates_root_dir, template_name)
         try:
             with open(full_template_path, encoding=self._encoding) as f:
                 try:
                     return json.load(f)
                 except ValueError as e:
-                    raise IOError("Failed to load file as JSON. Error: '{}'".format(e))
+                    raise IOError(f"Failed to load file as JSON. Error: '{e}'")
         except OSError as error:
-            raise IOError("Failed to read JSON template '{}'. Error: '{}'".format(template_name, error))
+            raise IOError(
+                f"Failed to read JSON template '{template_name}'. Error: '{error}'"
+            )
 
     def _get_fields_value(self, fields):
         values = []
@@ -128,44 +137,47 @@ class JsonTemplateClient:
             value = field.get_field_value() or ''
             if isinstance(field, Step_Field_Approve_Reject):
                 status = 'Approved' if field.approved == "true" else 'Rejected'
-                value = 'Status: {}; Reason: {}'.format(status, field.reason)
+                value = f'Status: {status}; Reason: {field.reason}'
             elif isinstance(field, Step_Field_Checkbox):
-                value = '[{}]'.format('X' if field.is_checked() else 'V')
+                value = f"[{'X' if field.is_checked() else 'V'}]"
             elif isinstance(field, Step_Field_Date):
                 value = field.get_remedy_datetime()
             elif isinstance(field, (Step_Field_Multi_Access_Request, Step_Field_Multi_Group_Change)):
                 value = field.to_pretty_str()
             elif isinstance(field, Step_Field_Multi_Hyperlink):
-                value = '{}'.format(', '.join(o.url for o in field.hyperlinks))
+                value = f"{', '.join((o.url for o in field.hyperlinks))}"
             elif isinstance(field, (Step_Field_Multiple_Selection, Step_Field_Multi_Network_Object)):
                 value = str(field)
             else:
                 value = str(value)
             values.append(value)
 
-        logger.debug("Returned values from fields: '{}'".format(values))
+        logger.debug(f"Returned values from fields: '{values}'")
         return ', '.join(values)
 
     def _get_sc_field_name_from_placeholder(self, template_field_name):
         return template_field_name.strip(self._specifier)
 
     def _find_method(self, method_name):
-        logger.debug("Looking for placeholder '{}' in functions".format(method_name))
+        logger.debug(f"Looking for placeholder '{method_name}' in functions")
         try:
             module = self.plugins['custom_functions']
             method = getattr(module, method_name)
         except (KeyError, AttributeError):
-            logger.debug("The function name '{}' is not in custom functions, trying placeholder".format(method_name))
+            logger.debug(
+                f"The function name '{method_name}' is not in custom functions, trying placeholder"
+            )
+
             method = getattr(PlaceHolders, method_name)
         return method
 
     def _apply_func_on_string(self, ticket, string, func):
-        logger.info("In _apply_func_on_string. String: '{}', Func: '{}'".format(string, func))
+        logger.info(f"In _apply_func_on_string. String: '{string}', Func: '{func}'")
         if func:
             try:
                 method = self._find_method(func[0])
             except AttributeError as e:
-                logger.error("Could not find the function '{}'".format(func[0]))
+                logger.error(f"Could not find the function '{func[0]}'")
             else:
                 string = method(ticket, string)
         return string
@@ -178,10 +190,12 @@ class JsonTemplateClient:
             method = self._find_method(f.lower())
         except AttributeError:
             logger.debug(
-                "No placeholder function with place holder name '{}', trying field name".format(placeholder))
-            logger.info("Getting field value for placeholder '{}'".format(placeholder))
+                f"No placeholder function with place holder name '{placeholder}', trying field name"
+            )
+
+            logger.info(f"Getting field value for placeholder '{placeholder}'")
             if step_name:
-                logger.info("Parsing JSON template for step '{}'".format(step_name))
+                logger.info(f"Parsing JSON template for step '{step_name}'")
                 step = ticket.get_step_by_name(step_name)
                 fields = []
                 for task in step.tasks:
@@ -190,10 +204,13 @@ class JsonTemplateClient:
                     replace_string = self._apply_func_on_string(ticket, self._get_fields_value(fields), func)
                     v = string_to_replace.replace(placeholder, replace_string)
                 else:
-                    logger.error("Step '{}' has no field '{}'".format(step_name, f))
+                    logger.error(f"Step '{step_name}' has no field '{f}'")
                     v = placeholder
             else:
-                logger.debug("Trying to find the field for placeholder '{}' in all of the steps".format(f))
+                logger.debug(
+                    f"Trying to find the field for placeholder '{f}' in all of the steps"
+                )
+
                 for step in ticket.steps[::-1]:
                     fields = []
                     for task in step.tasks:
@@ -203,7 +220,7 @@ class JsonTemplateClient:
                         v = string_to_replace.replace(placeholder, replace_string)
                         break
                 else:
-                    logger.error("Cannot find field name '{}' in ticket id '{}'".format(f, ticket.id))
+                    logger.error(f"Cannot find field name '{f}' in ticket id '{ticket.id}'")
                     v = placeholder
         else:
             replace_string = self._apply_func_on_string(ticket, str(method(ticket)), func)
@@ -234,34 +251,37 @@ class JsonTemplateClient:
 
     def _update_response(self, response, response_template):
         logger.info("Updating response values in fields")
-        if isinstance(response, dict) and isinstance(response_template, dict):
-            for key in response:
-                if key not in response_template:
-                    logger.debug("Key '{}' has not been found in the response template, skipping".format(key))
-                    continue
-                placeholders = self._update_response(response[key], response_template[key])
+        if not isinstance(response, dict) or not isinstance(
+            response_template, dict
+        ):
+            return self._replacement_regex.findall(str(response_template))
+        for key in response:
+            if key not in response_template:
+                logger.debug(
+                    f"Key '{key}' has not been found in the response template, skipping"
+                )
 
-                if not placeholders:
-                    logger.warning("No placeholders have been found for key '{}'".format(key))
-                else:
-                    for placeholder in placeholders:
-                        field_name = placeholder.strip(self._specifier)
-                        step_task = self.ticket.get_last_task()
+                continue
+            if placeholders := self._update_response(
+                response[key], response_template[key]
+            ):
+                for placeholder in placeholders:
+                    field_name = placeholder.strip(self._specifier)
+                    step_task = self.ticket.get_last_task()
+                    try:
+                        field = step_task.get_field_list_by_name(field_name)[0]
+                    except IndexError as e:
+                        msg = "Field name '{}' could not be found in step name '{}'"
+                        logger.error(msg.format(field_name, self.ticket.get_last_step().name))
+                    else:
+                        field.set_field_value(response[key])
                         try:
-                            field = step_task.get_field_list_by_name(field_name)[0]
-                        except IndexError as e:
-                            msg = "Field name '{}' could not be found in step name '{}'"
-                            logger.error(msg.format(field_name, self.ticket.get_last_step().name))
-                        else:
-                            field.set_field_value(response[key])
-                            try:
-                                self.sc_helper.put_field(field)
-                            except (ValueError, IOError) as error:
-                                msg = "Failed to update field name '{}' in ticket id '{}', Error: '{}'"
-                                logger.error(msg.format(field_name, self.ticket.id, error))
-        else:
-            placeholders = self._replacement_regex.findall(str(response_template))
-            return placeholders
+                            self.sc_helper.put_field(field)
+                        except (ValueError, IOError) as error:
+                            msg = "Failed to update field name '{}' in ticket id '{}', Error: '{}'"
+                            logger.error(msg.format(field_name, self.ticket.id, error))
+            else:
+                logger.warning(f"No placeholders have been found for key '{key}'")
 
     def send(self, http_method, endpoint, body, expected_status_codes):
         """ Posting http request
@@ -271,14 +291,17 @@ class JsonTemplateClient:
         :param expected_status_codes: http status code
         :return: None
         """
-        logger.debug("Send JSON request: \nHTTP method: '{}'\n URL path: '{}'\n Body: '{}'".format(http_method, endpoint, body))
+        logger.debug(
+            f"Send JSON request: \nHTTP method: '{http_method}'\n URL path: '{endpoint}'\n Body: '{body}'"
+        )
+
         method = getattr(self.client, http_method)
         response = method(
             endpoint=endpoint,
             data=body,
             expected_status_codes=expected_status_codes
         )
-        logger.debug("Endpoint '{}' response: {}".format(endpoint, response))
+        logger.debug(f"Endpoint '{endpoint}' response: {response}")
         return response
 
     def reassign_task(self, ticket):
@@ -303,28 +326,32 @@ class JsonTemplateClient:
                 self.sc_helper.reassign_task_by_username(new_last_task, participant, 'Reassigned by integration script')
 
     def pre_post_operations(self, ticket, func_names, **kwargs):
-        if func_names:
-            reassigned_status, ticket = self.reassign_task(ticket)
-            last_method_status = None
-            for func_name in func_names.replace(' ', '').split(','):
-                logger.info("Executing function '{}'".format(func_name))
+        if not func_names:
+            return
+        reassigned_status, ticket = self.reassign_task(ticket)
+        last_method_status = None
+        for func_name in func_names.replace(' ', '').split(','):
+            logger.info(f"Executing function '{func_name}'")
+            try:
+                module = self.plugins['custom_functions']
+                method = getattr(module, func_name)
+                logger.debug(f"The method '{func_name}' was found in custom functions")
+            except (KeyError, AttributeError):
+                msg = "Cannot find the customized function '{}' in custom functions, looking in default functions"
+                logger.warning(msg.format(func_name))
                 try:
-                    module = self.plugins['custom_functions']
-                    method = getattr(module, func_name)
-                    logger.debug("The method '{}' was found in custom functions".format(func_name))
-                except (KeyError, AttributeError):
-                    msg = "Cannot find the customized function '{}' in custom functions, looking in default functions"
-                    logger.warning(msg.format(func_name))
-                    try:
-                        method = getattr(Functions, func_name)
-                    except AttributeError:
-                        logger.error("Cannot find post customized function '{}' in Functions".format(func_name))
-                        return
-                    logger.debug("The method '{}' was found in default functions".format(func_name))
-                last_method_status = method(ticket, **kwargs)
+                    method = getattr(Functions, func_name)
+                except AttributeError:
+                    logger.error(
+                        f"Cannot find post customized function '{func_name}' in Functions"
+                    )
 
-            self.reverse_reassigned_ticket(ticket, reassigned_status)
-            return last_method_status
+                    return
+                logger.debug(f"The method '{func_name}' was found in default functions")
+            last_method_status = method(ticket, **kwargs)
+
+        self.reverse_reassigned_ticket(ticket, reassigned_status)
+        return last_method_status
 
     def run(self, ticket, **kwargs):
         """
@@ -346,7 +373,7 @@ class JsonTemplateClient:
                 expected_status_codes = [int(status) for status in status_codes if status]
                 json_data = self._parse_json_template(ticket, kwargs.get('step_name', None), template)
                 endpoint = kwargs['endpoint']
-                response_template = kwargs.get('response_template_name', None)
+                response_template = kwargs.get('response_template_name')
                 placeholders = self._replacement_regex.findall(endpoint)
                 for placeholder in placeholders:
                     endpoint = self._find_replacement(ticket, kwargs.get('step_name', None), placeholder, endpoint)
@@ -355,7 +382,7 @@ class JsonTemplateClient:
                     response = self.send(kwargs['http_method'], endpoints[0], json_data, expected_status_codes)
                     url = kwargs['endpoint'].split(self._specifier)[0]
                     for id in endpoints[1:]:
-                        new_endpoint = "{}{}".format(url, id)
+                        new_endpoint = f"{url}{id}"
                         response = self.send(kwargs['http_method'], new_endpoint, json_data, expected_status_codes)
                 else:
                     response = self.send(kwargs['http_method'], endpoint, json_data, expected_status_codes)
@@ -371,27 +398,33 @@ class JsonTemplateClient:
             self.pre_post_operations(ticket, kwargs.get('post', ''), **kwargs)
 
     def handle_action(self, ticket, action):
-        logger.info("In handle_action for ticket id '{}' and action '{}'".format(ticket.id, str(action)))
+        logger.info(
+            f"In handle_action for ticket id '{ticket.id}' and action '{str(action)}'"
+        )
+
         if action == "CLOSE":
             last_step_task = ticket.get_last_step().get_last_task()
             if last_step_task.assignee == 'N/A' and last_step_task.status == 'N/A':
                 action = "AUTOCLOSE"
 
-        section_name = "integration {}-{}".format(ticket.workflow.name, action)
+        section_name = f"integration {ticket.workflow.name}-{action}"
         try:
             action_config = conf.dict(section_name)
         except NoSectionError as error:
-            logger.info("No section for action '{}'. Msg: '{}'".format(action, error))
+            logger.info(f"No section for action '{action}'. Msg: '{error}'")
             return None
 
         action_config['section_name'] = section_name
         self.run(ticket, **action_config)
 
     def handle_step(self, ticket, prev_step_name):
-        logger.debug("In handle_step, Ticket id '{}' status is '{}'".format(ticket.id, ticket.status))
+        logger.debug(
+            f"In handle_step, Ticket id '{ticket.id}' status is '{ticket.status}'"
+        )
+
 
         if ticket.status.lower() == 'ticket closed':
-            logger.debug("Ticket id '{}' status is '{}'".format(ticket.id, ticket.status))
+            logger.debug(f"Ticket id '{ticket.id}' status is '{ticket.status}'")
             return
 
         if ticket.get_previous_step().name != prev_step_name:
@@ -410,11 +443,11 @@ class JsonTemplateClient:
                 msg = "Skipping, the current step name is: '{}', the script runs from step name: '{}'"
                 logger.debug(msg.format(current_step_name, previous_ticket_last_step_name))
                 return None
-            logger.debug("Getting configuration for current step '{}'".format(current_step_name))
+            logger.debug(f"Getting configuration for current step '{current_step_name}'")
             section_name = section_name_template.format(ticket.workflow.name, current_step_name)
             try:
                 current_step_config = conf.dict(section_name)
-                logger.debug("Read current step configuration: '{}'".format(current_step_config))
+                logger.debug(f"Read current step configuration: '{current_step_config}'")
             except NoSectionError as i:
                 logger.info(i)
             else:
@@ -427,7 +460,7 @@ class JsonTemplateClient:
         except IndexError:
             logger.warning("No previous step name")
         else:
-            logger.debug("Getting configuration for previous step '{}'".format(previous_step_name))
+            logger.debug(f"Getting configuration for previous step '{previous_step_name}'")
             section_name = section_name_template.format(ticket.workflow.name, previous_step_name)
             try:
                 prev_step_config = conf.dict(section_name)
@@ -445,19 +478,19 @@ class JsonTemplateClient:
         try:
             plugin_files = filter(py_search.search, os.listdir(plugins_root_dir))
         except FileNotFoundError as e:
-            logger.info("No plugins directory was found. Error: '{}'".format(e))
+            logger.info(f"No plugins directory was found. Error: '{e}'")
         else:
             plugin_string_list = list(map(lambda fp: os.path.splitext(fp)[0], plugin_files))
             sys.path.append(plugins_root_dir)
-            logger.info("Plugins to import: '{}'".format(plugin_string_list))
+            logger.info(f"Plugins to import: '{plugin_string_list}'")
             for plugin_string in plugin_string_list:
                 try:
                     module = import_module(plugin_string)
-                    plugins.update({module.__name__: module})
+                    plugins[module.__name__] = module
                 except ImportError as e:
                     logger.error(e)
 
-            logger.info("Imported plugins: '{}'".format(plugins))
+            logger.info(f"Imported plugins: '{plugins}'")
         return plugins
 
     @classmethod
@@ -468,5 +501,5 @@ class JsonTemplateClient:
             raise ValueError(str(e))
         conf_data['sc_helper'] = sc_helper
         conf_data['sc_username'] = sc_username
-        logger.debug("Read setup configuration: '{}'".format(conf_data))
+        logger.debug(f"Read setup configuration: '{conf_data}'")
         return cls(**conf_data)

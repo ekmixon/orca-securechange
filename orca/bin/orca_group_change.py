@@ -69,8 +69,11 @@ class OrcaClient:
                         'Authorization': ORCA_TOKEN}
 
     def get_login_data(self, username, password):
-        login_data = {'username': username, 'password': password} if all((username, password)) else None
-        return login_data
+        return (
+            {'username': username, 'password': password}
+            if all((username, password))
+            else None
+        )
 
     def get_group_memebers(self):
         logger.debug("Getting group name and members")
@@ -79,10 +82,10 @@ class OrcaClient:
                                    expected_status_codes=200, verify_ssl=False,
                                    login_data=self.login_data).response.content.decode('utf-8')
         except (ValueError, IOError, exceptions.REST_HTTP_Exception) as error:
-            msg = "Failed to get new tickets from orca. Error: {}".format(error)
+            msg = f"Failed to get new tickets from orca. Error: {error}"
             logger.error(msg)
             raise IOError
-        logger.debug("Got the response: {}".format(response))
+        logger.debug(f"Got the response: {response}")
         return json.loads(response)
 
     def update_orca_ticket(self, uuid, ticket_id, status, msg, group_name, url_path=None, sc_url='N/A'):
@@ -100,9 +103,9 @@ class OrcaClient:
             response = POST_Request(self.host, url_path, headers=self.headers, body=json.dumps(body),
                                     expected_status_codes=[200, 201, 204], verify_ssl=False,
                                     login_data=self.login_data).response.content.decode('utf-8')
-            logger.debug("Got response: {}".format(response))
+            logger.debug(f"Got response: {response}")
         except (ValueError, IOError, exceptions.REST_HTTP_Exception) as error:
-            msg = "Failed to update ticket {} on Orca as updated. Error: {}".format(uuid, error)
+            msg = f"Failed to update ticket {uuid} on Orca as updated. Error: {error}"
             logger.error(msg)
             raise IOError
 
@@ -120,14 +123,12 @@ def get_cli_args():
     parser.add_argument("--debug",
                         action="store_true",
                         help="Print out logging information to STDOUT.")
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def get_ticket_link(ticket_id):
     link_template = "https://{}/securechangeworkflow/pages/myRequest/myRequestsMain.seam?ticketId={}"
-    ticket_link = link_template.format(sc_host, ticket_id)
-    return ticket_link
+    return link_template.format(sc_host, ticket_id)
 
 
 def valid_device_ids(devices):
@@ -142,14 +143,22 @@ def valid_device_ids(devices):
 
 
 def get_group_objects_by_name(group_name):
-    logger.info("Getting all groups from all devices by name '{}' from first step".format(group_name))
-    net_group_to_update = []
+    logger.info(
+        f"Getting all groups from all devices by name '{group_name}' from first step"
+    )
+
     network_objects = st_helper.network_object_text_search(group_name, "name", exact_match=True)
-    for network_object in network_objects:
-        if isinstance(network_object, Group_Network_Object) and network_object.display_name == group_name:
-                # and network_object.device_id in device_ids:
-            net_group_to_update.append(network_object)
-    logger.debug('Groups have been found: {}'.format(','.join([g.display_name for g in net_group_to_update])))
+    net_group_to_update = [
+        network_object
+        for network_object in network_objects
+        if isinstance(network_object, Group_Network_Object)
+        and network_object.display_name == group_name
+    ]
+
+    logger.debug(
+        f"Groups have been found: {','.join([g.display_name for g in net_group_to_update])}"
+    )
+
     return net_group_to_update
 
 
@@ -163,7 +172,7 @@ def get_edited_groups(groups_to_update, g_members):
             m_obj = st_helper.network_object_text_search(member.uid.replace('{', '').replace('}', ''), "uid",
                                                          exact_match=True, filter='uid')[0]
             if isinstance(m_obj, Subnet_Network_Object):
-                cidr = sum([bin(int(x)).count("1") for x in m_obj.netmask.split(".")])
+                cidr = sum(bin(int(x)).count("1") for x in m_obj.netmask.split("."))
                 ip_str = "{}/{}".format(m_obj.ip, cidr)
                 o_type = 'NETWORK'
                 object_details = ip_str
@@ -205,7 +214,7 @@ def get_edited_groups(groups_to_update, g_members):
         for network_object in network_objects:
             if isinstance(network_object, Subnet_Network_Object):
                 o_type = 'NETWORK'
-                cidr = sum([bin(int(x)).count("1") for x in network_object.netmask.split(".")])
+                cidr = sum(bin(int(x)).count("1") for x in network_object.netmask.split("."))
                 ip_cidr = "{}/{}".format(network_object.ip, cidr)
                 if ip_cidr not in tmp_members:
                     continue
@@ -298,10 +307,10 @@ def get_edited_groups(groups_to_update, g_members):
 
 
 def update_groups(groups, orca_id, group_name):
-    logger.debug("Groups to update '{}'".format(groups))
+    logger.debug(f"Groups to update '{groups}'")
     if groups:
         ticket = Ticket.from_file(ticket_template_path)
-        ticket.subject = "Generated from Orca ID {}".format(orca_id)
+        ticket.subject = f"Generated from Orca ID {orca_id}"
         current_task = ticket.get_last_step().get_last_task()
         group_change_field = current_task.get_field_list_by_type(Attributes.FIELD_TYPE_MULTI_GROUP_CHANGE)[0]
         group_change_field.group_changes = groups
@@ -309,14 +318,14 @@ def update_groups(groups, orca_id, group_name):
         orca_task_field.text = orca_id
         group_name_field = current_task.get_field_list_by_name('Group Name')[0]
         group_name_field.text = group_name
-        logger.debug("The new ticket is:\n{}".format(ticket.to_xml_string()))
+        logger.debug(f"The new ticket is:\n{ticket.to_xml_string()}")
         try:
             ticket_id = sc_helper.post_ticket(ticket)
         except (ValueError, IOError) as e:
             logger.error(e)
             ticket_id = None
 
-        logger.info("SC ticket id '{}' was created".format(ticket_id))
+        logger.info(f"SC ticket id '{ticket_id}' was created")
         return ticket_id
 
 
@@ -340,7 +349,7 @@ def monitor_loop(sleep_time=DEFAULT_POOL_INTERVAL, debug=False):
 
                     groups_to_update = get_group_objects_by_name(g_name)
                     if not groups_to_update:
-                        msg = "Group name '{}' could not be found".format(g_name)
+                        msg = f"Group name '{g_name}' could not be found"
                         orca_client.update_orca_ticket(orca_response["id"], 'N/A',
                                                        status=OrcaStatuses.Failed.value,
                                                        msg=msg,

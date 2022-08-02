@@ -51,26 +51,31 @@ Example:
 def delete_key(key):
     try:
         confirm = str_to_bool(
-            input("Are you sure you want to delete the credentials for key {}? [y/n]\n".format(key)).lower())
+            input(
+                f"Are you sure you want to delete the credentials for key {key}? [y/n]\n"
+            ).lower()
+        )
+
     except ValueError:
-        print("Failed to confirm response, key {} wasn't deleted.".format(key))
+        print(f"Failed to confirm response, key {key} wasn't deleted.")
     else:
         if not confirm:
             return
         try:
             secret_helper.delete_section(key)
         except (KeyError, ValueError) as e:
-            msg = "Failed to delete credentials for key '{}' in secure DB".format(key)
+            msg = f"Failed to delete credentials for key '{key}' in secure DB"
             print(msg)
         else:
-            print("Credentials for the key '{}' was deleted".format(key))
+            print(f"Credentials for the key '{key}' was deleted")
 
 
 def show_existing_keys():
     username_items = (item for item in secret_helper.db if item.endswith(SecretDb.USERNAME_SUFFIX))
     for item in username_items:
-        print('Configured {} username: {}'.format(item.replace(SecretDb.USERNAME_SUFFIX, ''),
-                                                  secret_helper._get_encrypted(item)))
+        print(
+            f"Configured {item.replace(SecretDb.USERNAME_SUFFIX, '')} username: {secret_helper._get_encrypted(item)}"
+        )
 
 
 def main():
@@ -93,8 +98,8 @@ def main():
         credential_items_to_set = cli_args.optional_credentials_to_set
     credentials = {}
     for credential_item in credential_items_to_set:
-        username_key = "username_" + credential_item
-        password_key = "password_" + credential_item
+        username_key = f"username_{credential_item}"
+        password_key = f"password_{credential_item}"
         try:
             try:
                 credentials[username_key] = secret_helper.get_username(credential_item)
@@ -107,28 +112,32 @@ def main():
                 credentials[password_key] = None
 
             if not credentials[username_key] or cli_args.overwrite:
-                print("\r\rPlease enter the username for {}:".format(credential_item), end=' ')
+                print(f"\r\rPlease enter the username for {credential_item}:", end=' ')
                 username_string = input()
                 secret_helper.set_username(credential_item, username_string)
-                print("\r\rUsername for {} set.".format(credential_item))
+                print(f"\r\rUsername for {credential_item} set.")
             else:
-                print("\r\rUsername for {} already set, skipping.".format(credential_item))
+                print(f"\r\rUsername for {credential_item} already set, skipping.")
             if not credentials[password_key] or cli_args.overwrite:
                 password_valid = False
                 password_string = ""
                 while not password_valid:
                     password_string = getpass.unix_getpass(
-                        "\r\rPlease enter the password for {}:".format(credential_item))
+                        f"\r\rPlease enter the password for {credential_item}:"
+                    )
+
                     confirm_password_string = getpass.unix_getpass(
-                        "\r\rPlease confirm the password for {}:".format(credential_item))
+                        f"\r\rPlease confirm the password for {credential_item}:"
+                    )
+
                     if password_string == confirm_password_string:
                         password_valid = True
                     else:
-                        print("\r\rThe passwords for {} do not match.".format(credential_item))
+                        print(f"\r\rThe passwords for {credential_item} do not match.")
                 secret_helper.set_password(credential_item, password_string)
-                print("\r\rPassword for {} set.".format(credential_item))
+                print(f"\r\rPassword for {credential_item} set.")
             else:
-                print("\r\rPassword for {} already set, skipping.".format(credential_item))
+                print(f"\r\rPassword for {credential_item} already set, skipping.")
         except KeyboardInterrupt:
             sys.stdout.write("\r\r" + 75 * " ")
             continue

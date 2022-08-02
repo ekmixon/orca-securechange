@@ -34,8 +34,8 @@ class Secret_Store_Helper(object):
     def __init__(self, secret_data_path=None):
 
         if secret_data_path:
-            self.passphrase_path = secret_data_path + "/secret.passphrase"
-            self.secretdb_path = secret_data_path + "/secret.db"
+            self.passphrase_path = f"{secret_data_path}/secret.passphrase"
+            self.secretdb_path = f"{secret_data_path}/secret.db"
         else:
             self.passphrase_path = Secret_Store_Helper.PASSPHRASE_FILE
             self.secretdb_path = Secret_Store_Helper.SECRETSDB_FILE
@@ -152,7 +152,7 @@ class Secret_Store_Helper(object):
 
     def ensure(self, key):
         """ Test if key is stored, if not, prompt the user for it while hiding their input from shoulder-surfers."""
-        if not key in self.db:
+        if key not in self.db:
             self.set(key, getpass('Please enter a value for "%s":' % key))
 
 
@@ -234,6 +234,6 @@ class SecretDb(Secret_Store_Helper):
             try:
                 del db[section + suffix]
             except KeyError as e:
-                msg = "Failed to delete section '{}', Error: '{}'".format(section + suffix, e)
+                msg = f"Failed to delete section '{section + suffix}', Error: '{e}'"
                 raise KeyError(msg)
         self.write_db_file(db)

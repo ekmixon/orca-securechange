@@ -9,7 +9,7 @@ class PlaceHolders:
 
     @staticmethod
     def date_only(ticket):
-        return str(str(datetime.now().date()))
+        return str(datetime.now().date())
 
     @staticmethod
     def firewall_list(ticket):

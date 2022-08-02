@@ -20,12 +20,16 @@ def risk_status(ticket):
             multi_access_request_field = task.get_field_list_by_type(Attributes.FIELD_TYPE_MULTI_ACCESS_REQUEST)[0]
         except IndexError:
             continue
-        for ar in multi_access_request_field.access_requests:
-            if ar.risk_analysis_result.has_risk():
-                return "YES"
-        return "NO"
-    else:
-        logger.warning("Risk status has not been found in all of the ticket steps")
+        return next(
+            (
+                "YES"
+                for ar in multi_access_request_field.access_requests
+                if ar.risk_analysis_result.has_risk()
+            ),
+            "NO",
+        )
+
+    logger.warning("Risk status has not been found in all of the ticket steps")
 
 
 def risk_results(ticket):

@@ -7,7 +7,10 @@ logger = logging.getLogger(THIRD_PARTY_LOGGER_NAME)
 
 
 def verifier_status(ticket):
-    logger.debug("Validating if ARs on ticket id '{}' are already implemented".format(ticket.id))
+    logger.debug(
+        f"Validating if ARs on ticket id '{ticket.id}' are already implemented"
+    )
+
     for step in ticket.steps[::-1]:
         task = step.get_last_task()
         try:
@@ -18,6 +21,5 @@ def verifier_status(ticket):
         verified = [ar.verifier_result.is_implemented() if ar.verifier_result else False for ar in
                     ar_field.access_requests]
         return "Fully implemented" if all(verified) else "Not implemented"
-    else:
-        logger.warning("No verifier status has been found in all of the ticket steps")
-        return "Not Implemented"
+    logger.warning("No verifier status has been found in all of the ticket steps")
+    return "Not Implemented"

@@ -14,9 +14,8 @@ def approve_reject_reason(ticket):
         except IndexError:
             continue
         return approve_reject_field.reason
-    else:
-        msg = "The approve-reject status has not been found in all of the ticket id '{}' steps"
-        logger.warning(msg.format(ticket.id))
+    msg = "The approve-reject status has not been found in all of the ticket id '{}' steps"
+    logger.warning(msg.format(ticket.id))
 
 
 def approve_reject_status(ticket):
@@ -26,11 +25,9 @@ def approve_reject_status(ticket):
             approve_reject_field = task.get_field_list_by_type(Attributes.FIELD_TYPE_APPROVE_REJECT)[0]
         except IndexError:
             continue
-        status = 'Approved' if approve_reject_field.approved == "true" else 'Rejected'
-        return status
-    else:
-        msg = "The approve-reject status has not been found in all of the ticket id '{}' steps"
-        logger.warning(msg.format(ticket.id))
+        return 'Approved' if approve_reject_field.approved == "true" else 'Rejected'
+    msg = "The approve-reject status has not been found in all of the ticket id '{}' steps"
+    logger.warning(msg.format(ticket.id))
 
 
 def selected_plus_options(ticket):
@@ -40,7 +37,7 @@ def selected_plus_options(ticket):
             field = task.get_field_list_by_type(Attributes.FIELD_TYPE_DROP_DOWN_LIST)[0]
         except IndexError:
             continue
-        return "{} selected from [{}]".format(field.selection, ', '.join(o.value for o in field.options))
-    else:
-        msg = "The drop down field has not been found in all of the ticket id '{}' steps"
-        logger.warning(msg.format(ticket.id))
+        return f"{field.selection} selected from [{', '.join((o.value for o in field.options))}]"
+
+    msg = "The drop down field has not been found in all of the ticket id '{}' steps"
+    logger.warning(msg.format(ticket.id))

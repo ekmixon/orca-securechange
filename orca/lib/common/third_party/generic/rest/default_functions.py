@@ -24,16 +24,16 @@ def get_first_field_in_ticket(ticket, **kwargs):
         except IndexError:
             continue
         return field
-    else:
-        return None
+    return None
 
 
 def approve_reject_on_severity(ticket, severity):
-    logger.debug("In approve_reject_on_high for ticket id '{}'".format(ticket.id))
+    logger.debug(f"In approve_reject_on_high for ticket id '{ticket.id}'")
     current_task = ticket.get_current_task()
     approve_field = current_task.get_field_list_by_type(Attributes.FIELD_TYPE_APPROVE_REJECT)[0]
-    multi_access_request_field = get_first_field_in_ticket(ticket, field_type=Attributes.FIELD_TYPE_MULTI_ACCESS_REQUEST)
-    if multi_access_request_field:
+    if multi_access_request_field := get_first_field_in_ticket(
+        ticket, field_type=Attributes.FIELD_TYPE_MULTI_ACCESS_REQUEST
+    ):
         for ar in multi_access_request_field.access_requests:
             for security_policy_violation in ar.risk_analysis_result.security_policy_violations:
                 if security_policy_violation.severity.lower() == severity.lower():
@@ -53,9 +53,9 @@ def approve_reject_on_severity(ticket, severity):
 class Functions:
     @staticmethod
     def advance(ticket, **kwargs):
-        logger.debug("Execute trigger advance for ticket id '{}'".format(ticket.id))
+        logger.debug(f"Execute trigger advance for ticket id '{ticket.id}'")
         current_task = ticket.get_current_task()
-        logger.debug("Advancing step name '{}'".format(ticket.get_current_step().name))
+        logger.debug(f"Advancing step name '{ticket.get_current_step().name}'")
         mandatory_fields_status = False
         for field in current_task.fields:
             if isinstance(field, Step_Field_Approve_Reject) and not field.approved and not field.reason :
@@ -71,13 +71,17 @@ class Functions:
         try:
             sc_helper.put_task(current_task)
         except (IOError, ValueError) as e:
-            raise IOError("Failed to advance step. Error was: '{}'".format(e))
+            raise IOError(f"Failed to advance step. Error was: '{e}'")
 
     @classmethod
     def advance_if_fully_implemented(cls, ticket, **kwargs):
-        logger.debug("Execute trigger advance if fully implemented for ticket id '{}'".format(ticket.id))
-        multi_access_request_field = get_first_field_in_ticket(ticket, field_type=Attributes.FIELD_TYPE_MULTI_ACCESS_REQUEST)
-        if multi_access_request_field:
+        logger.debug(
+            f"Execute trigger advance if fully implemented for ticket id '{ticket.id}'"
+        )
+
+        if multi_access_request_field := get_first_field_in_ticket(
+            ticket, field_type=Attributes.FIELD_TYPE_MULTI_ACCESS_REQUEST
+        ):
             try:
                 designer_results = multi_access_request_field.get_designer_results(
                     conf.get_username("securechange"),
@@ -85,14 +89,14 @@ class Functions:
                 )
             except IOError as e:
                 logger.error("Failed to get designer results.")
-                logger.error("Error: '{}'".format(e))
+                logger.error(f"Error: '{e}'")
             else:
                 if designer_results.is_implemented():
                     cls.advance(ticket, **kwargs)
 
     @classmethod
     def approve_reject(cls, ticket, **kwargs):
-        logger.debug("In approve_reject for ticket id '{}'".format(ticket.id))
+        logger.debug(f"In approve_reject for ticket id '{ticket.id}'")
         current_task = ticket.get_current_task()
         approve_field = current_task.get_field_list_by_type(Attributes.FIELD_TYPE_APPROVE_REJECT)[0]
         if PlaceHolders.risk_status(ticket).lower() == 'yes':
@@ -106,17 +110,17 @@ class Functions:
 
     @classmethod
     def approve_reject_on_critical(cls, ticket, **kwargs):
-        logger.debug("In approve_reject_on_high for ticket id '{}'".format(ticket.id))
+        logger.debug(f"In approve_reject_on_high for ticket id '{ticket.id}'")
         approve_reject_on_severity(ticket, 'critical')
 
     @classmethod
     def approve_reject_on_high(cls, ticket, **kwargs):
-        logger.debug("In approve_reject_on_high for ticket id '{}'".format(ticket.id))
+        logger.debug(f"In approve_reject_on_high for ticket id '{ticket.id}'")
         approve_reject_on_severity(ticket, 'high')
 
     @classmethod
     def cancel_ticket(cls, ticket, **kwargs):
-        logger.info("Canceling ticket id '{}'".format(ticket.id))
+        logger.info(f"Canceling ticket id '{ticket.id}'")
         try:
             sc_helper.cancel_ticket(ticket.id)
         except (ValueError, IOError) as e:
@@ -128,7 +132,7 @@ class Functions:
         try:
             return ticket.get_previous_step().is_skipped()
         except (ValueError, IOError, KeyError) as e:
-            logger.error("Failed to check if previous step skipped. Error: '{}'".format(e))
+            logger.error(f"Failed to check if previous step skipped. Error: '{e}'")
 
     @staticmethod
     def do_not_send_request_if_skip_checkbox_checked(ticket, **kwargs):
@@ -138,5 +142,7 @@ class Functions:
             skipped_checkbox_field = previous_step_task.get_field_list_by_name('skip', case_sensitive=False)[0]
             return skipped_checkbox_field.is_checked()
         except (ValueError, IOError, KeyError) as e:
-            logger.error("Failed to check if the checkbox field in the previous step was skipped. Error: '{}'".format(e))
+            logger.error(
+                f"Failed to check if the checkbox field in the previous step was skipped. Error: '{e}'"
+            )
 
